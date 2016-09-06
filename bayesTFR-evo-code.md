@@ -1,6 +1,6 @@
 #Evolutionary bayesTFR code
 
-This document contains the R code used to generate the simulations and charts in the working paper "Natural selection makes world population stabilisation unlikely in the foreseeable future" (link to be provided when available). The simulations use an amended "evolutionary" version of the R package bayesTFR (link). The evolutionary version can be found at [github].
+This document contains the R code used to generate the simulations and charts in the working paper "Natural selection makes world population stabilisation unlikely in the foreseeable future" (link to be provided when available). The simulations use an amended "evolutionary" version of the R package [bayesTFR](https://cran.r-project.org/web/packages/bayesTFR/index.html). The evolutionary version can be found at [github](https://github.com/jasonacollins/bayesTFR).
 
 ##Initiation
 
@@ -8,7 +8,7 @@ These simulations require the packages bayesTFR, bayesLife and bayesPop. The evo
 ```
 install.packges("devtools")
 library("devtools")
-install_github(XXX)
+install_github("jasonacollins/bayesTFR")
 ```
 
 BayesLife and bayesPop are installed from CRAN.
