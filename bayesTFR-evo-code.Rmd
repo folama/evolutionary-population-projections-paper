@@ -1,0 +1,138 @@
+#Evolutionary bayesTFR code
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+```
+
+This document contains the R code used to generate the simulations and charts in the working paper "Natural selection makes world population stabilisation unlikely in the foreseeable future" (link to be provided when available). The simulations use an amended "evolutionary" version of the R package [bayesTFR](https://cran.r-project.org/web/packages/bayesTFR/index.html). The evolutionary version can be found at [github](https://github.com/jasonacollins/bayesTFR).
+
+##Initiation
+
+These simulations require the packages bayesTFR, bayesLife and bayesPop. The evolutionary branch of bayesTFR should be installed from github, which requires installation of the package 'devtools'
+
+```{r}
+install.packages("devtools")
+library("devtools")
+install_github("jasonacollins/bayesTFR")
+```
+
+BayesLife and bayesPop are installed from CRAN.
+```{r}
+install.packages("bayesLife")
+install.packages("bayesPop")
+```
+
+All three packages should be loaded.
+```{r}
+library("bayesTFR")
+library("bayesLife")
+library("bayesPop")
+```
+
+##Base model
+
+To generate the base model forecasts, we ran a converged simulation with 3x62,000 long MCMCs of Phase II and 3x70,000 long MCMCs of Phase III.
+
+```{r}
+#setwd("fertility/base")
+m <- run.tfr.mcmc(iter='auto', thin=1, nr.chains=3, start.year=1950, present.year=2015, wpp.year=2017, seed=20160529, verbose=TRUE, replace=TRUE)
+
+simDir <- file.path(getwd(), "bayesTFR.output")
+
+m3 <- run.tfr3.mcmc(iter='auto', thin=1, nr.chains=3, seed=20160529, sim.dir=simDir, verbose=TRUE, replace=TRUE)
+```
+
+We generated fertility preditions and stored them in the element `predtfr`.
+
+```{r}
+tfr.predict(evo=FALSE, end.year=2100, burnin=2000, burnin3=10000, seed=20160529, nr.traj=1000, sim.dir=simDir, use.correlation=TRUE, save.as.ascii=0, use.tfr3=TRUE)
+
+predtfr <- get.tfr.prediction(sim.dir=simDir)
+```
+
+We generated base population projections and stored them in the element `predpop`. We used life expectancy projections from WPP2017.
+
+```{r}
+pop.predict(end.year=2100, start.year=1950, present.year=2015, nr.traj=1000, inputs = list(tfr.sim.dir=simDir), output.dir=getwd(), verbose=TRUE, wpp.year=2015)
+
+predpop <- get.pop.prediction(sim.dir=getwd())
+
+write.pop.projection.summary(predpop, what='pop', output.dir=getwd())
+```
+
+We also generated world and continental aggregate population support ratios from the population data.
+
+```{r}
+aggr <- pop.aggregate(predpop, c(900, 903, 904, 905, 908, 909, 935))
+
+write.pop.projection.summary(aggr, what=c('pop', 'popsexage'), output.dir=getwd(), file.suffix='world')
+
+write.pop.projection.summary(aggr, expression="PXXX[5:13]/PXXX[14:27]", output.dir=getwd(), file.suffix='PSR aggregate')
+
+write.pop.projection.summary(aggr, expression="PXXX[5:13]/(PXXX[1:4] + PXXX[14:27])", output.dir=getwd(), file.suffix='TPSR aggregate')
+```
+
+##Evolutionary model
+
+Before generating the evolutionary model predictions, we copied the MCMC data generated for the base predictions into a new directory for the evolutonary simulations. We did this by creating a replica of the base simulation.
+
+We generated the evolutionary fertility predictions by setting `evo=TRUE` and stored them in the element `evopredtfr`.
+
+```{r}
+#setwd("../evo")
+simDir <- file.path(getwd(), "bayesTFR.output")
+tfr.predict(evo=TRUE, h2=0.4, end.year=2100, burnin=2000, burnin3=10000, seed=20160529, nr.traj=1000, sim.dir=simDir, use.correlation=TRUE, save.as.ascii=0, use.tfr3=TRUE, replace.output=TRUE)
+
+evopredtfr <- get.tfr.prediction(sim.dir=simDir)
+```
+
+We then generated evolutionary population projections and stored them in the element `evopredpop`. We used life expectancy data from WPP2015.
+
+```{r}
+pop.predict(end.year=2100, start.year=1950, present.year=2015, nr.traj=1000, inputs = list(tfr.sim.dir=simDir), output.dir=getwd(), verbose=TRUE, wpp.year=2015, replace.output=TRUE)
+
+evopredpop <- get.pop.prediction(sim.dir=getwd())
+
+write.pop.projection.summary(evopredpop, what='pop', output.dir=getwd())
+```
+
+We also generated world and continental aggregate population support ratios for the evolutionary model.
+
+```{r}
+evoaggr <- pop.aggregate(evopredpop, c(900, 903, 904, 905, 908, 909, 935))
+
+write.pop.projection.summary(evoaggr, what='pop', output.dir=getwd(), file.suffix='world')
+
+write.pop.projection.summary(evoaggr, expression="PXXX[5:13]/PXXX[14:27]", output.dir=getwd(), file.suffix='PSR aggregate')
+
+write.pop.projection.summary(evoaggr, expression="PXXX[5:13]/(PXXX[1:4]+PXXX[14:27])", output.dir=getwd(), file.suffix='TPSR aggregate')
+```
+
+##Charts
+
+We generated charts of the total fertility rate, with the base and evolutionary model plotted on the same figure. The country code was changed that of the area for which we wished to generate the chart. The country codes are:
+
+* World 900
+* Africa 903
+* Latin America and the Caribbean 904
+* Northern America 905
+* Europe 908
+* Oceania 909 (we do not plot this)
+* Asia 935
+
+```{r}
+for (i in c(900, 903, 904, 905, 908, 935)) {
+  tfr.trajectories.plot(evopredtfr, country=i, pi=c(90), nr.traj=0, half.child.variant=FALSE, typical.trajectory=FALSE, show.legend = FALSE, ylim=NULL)
+  tfr.trajectories.plot(predtfr, country=i, pi=c(90), nr.traj=0, col=c('black', 'green', 'blue', 'blue', 'blue', '#00000020'), half.child.variant=FALSE, typical.trajectory=FALSE, show.legend = FALSE, add=TRUE)
+  dev.copy2pdf(out.type = "pdf", width = 8, height = 8, file=paste0(i, "TFR.pdf"))
+}
+```
+
+We then generated charts of the population size, with the base and evolutionary model plotted on the same figure.
+```{r}
+for (i in c(900, 903, 904, 905, 908, 935)) {
+  pop.trajectories.plot (evoaggr, country=i, pi=c(90), nr.traj=0, sum.over.ages=TRUE, show.legend=FALSE)
+  pop.trajectories.plot (aggr, country=i, pi=c(90), nr.traj=0, col=c('black', 'blue', 'blue', 'blue', 'blue', '#00000020'), sum.over.ages=TRUE, show.legend=FALSE, add=TRUE)
+  dev.copy2pdf(out.type = "pdf", width = 8, height = 8, file=paste0(i, "pop.pdf"))
+}
+```
