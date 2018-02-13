@@ -35,17 +35,19 @@ To generate the base model forecasts, we ran a converged simulation with 3x62,00
 
 ```{r}
 #setwd("fertility/base")
-m <- run.tfr.mcmc(iter='auto', thin=1, nr.chains=3, start.year=1950, present.year=2015, wpp.year=2017, seed=20160529, verbose=TRUE, replace=TRUE)
+seed <- 20180205
+
+m <- run.tfr.mcmc(iter='auto', thin=30, nr.chains=3, start.year=1950, present.year=2015, wpp.year=2017, seed=seed, verbose=TRUE, replace=TRUE)
 
 simDir <- file.path(getwd(), "bayesTFR.output")
 
-m3 <- run.tfr3.mcmc(iter='auto', thin=1, nr.chains=3, seed=20160529, sim.dir=simDir, verbose=TRUE, replace=TRUE)
+m3 <- run.tfr3.mcmc(iter='auto', thin=30, nr.chains=3, seed=seed, sim.dir=simDir, verbose=TRUE, replace=TRUE)
 ```
 
 We generated fertility preditions and stored them in the element `predtfr`.
 
 ```{r}
-tfr.predict(evo=FALSE, end.year=2100, burnin=2000, burnin3=10000, seed=20160529, nr.traj=1000, sim.dir=simDir, use.correlation=TRUE, save.as.ascii=0, use.tfr3=TRUE)
+tfr.predict(evo=FALSE, end.year=2100, burnin=2000, burnin3=10000, seed=seed, nr.traj=1000, sim.dir=simDir, use.correlation=TRUE, save.as.ascii=0, use.tfr3=TRUE, replace.output = TRUE)
 
 predtfr <- get.tfr.prediction(sim.dir=simDir)
 ```
@@ -53,19 +55,19 @@ predtfr <- get.tfr.prediction(sim.dir=simDir)
 We generated base population projections and stored them in the element `predpop`. We used life expectancy projections from WPP2017.
 
 ```{r}
-pop.predict(end.year=2100, start.year=1950, present.year=2015, nr.traj=1000, inputs = list(tfr.sim.dir=simDir), output.dir=getwd(), verbose=TRUE, wpp.year=2015)
+pop.predict(end.year=2100, start.year=1950, present.year=2015, nr.traj=1000, inputs = list(tfr.sim.dir=simDir), output.dir=getwd(), verbose=TRUE, wpp.year=2017)
 
 predpop <- get.pop.prediction(sim.dir=getwd())
 
 write.pop.projection.summary(predpop, what='pop', output.dir=getwd())
 ```
 
-We also generated world and continental aggregate population support ratios from the population data.
+We also generated world and continental aggregates and population support ratios from the population data.
 
 ```{r}
 aggr <- pop.aggregate(predpop, c(900, 903, 904, 905, 908, 909, 935))
 
-write.pop.projection.summary(aggr, what=c('pop', 'popsexage'), output.dir=getwd(), file.suffix='world')
+write.pop.projection.summary(aggr, what=c('pop'), output.dir=getwd(), file.suffix='world')
 
 write.pop.projection.summary(aggr, expression="PXXX[5:13]/PXXX[14:27]", output.dir=getwd(), file.suffix='PSR aggregate')
 
@@ -81,15 +83,15 @@ We generated the evolutionary fertility predictions by setting `evo=TRUE` and st
 ```{r}
 #setwd("../evo")
 simDir <- file.path(getwd(), "bayesTFR.output")
-tfr.predict(evo=TRUE, h2=0.4, end.year=2100, burnin=2000, burnin3=10000, seed=20160529, nr.traj=1000, sim.dir=simDir, use.correlation=TRUE, save.as.ascii=0, use.tfr3=TRUE, replace.output=TRUE)
+tfr.predict(evo=TRUE, h2=0.3, end.year=2100, burnin=2000, burnin3=10000, seed=seed, nr.traj=1000, sim.dir=simDir, use.correlation=TRUE, save.as.ascii=0, use.tfr3=TRUE, replace.output=TRUE)
 
 evopredtfr <- get.tfr.prediction(sim.dir=simDir)
 ```
 
-We then generated evolutionary population projections and stored them in the element `evopredpop`. We used life expectancy data from WPP2015.
+We then generated evolutionary population projections and stored them in the element `evopredpop`. We used life expectancy data from WPP2017.
 
 ```{r}
-pop.predict(end.year=2100, start.year=1950, present.year=2015, nr.traj=1000, inputs = list(tfr.sim.dir=simDir), output.dir=getwd(), verbose=TRUE, wpp.year=2015, replace.output=TRUE)
+pop.predict(end.year=2100, start.year=1950, present.year=2015, nr.traj=1000, inputs = list(tfr.sim.dir=simDir), output.dir=getwd(), verbose=TRUE, wpp.year=2017, replace.output=TRUE)
 
 evopredpop <- get.pop.prediction(sim.dir=getwd())
 
