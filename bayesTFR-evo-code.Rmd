@@ -67,7 +67,7 @@ We also generated world and continental aggregates and population support ratios
 ```{r}
 aggr <- pop.aggregate(predpop, c(900, 903, 904, 905, 908, 909, 935))
 
-write.pop.projection.summary(aggr, what=c('pop'), output.dir=getwd(), file.suffix='world')
+write.pop.projection.summary(aggr, what='pop', output.dir=getwd(), file.suffix='world')
 
 write.pop.projection.summary(aggr, expression="PXXX[5:13]/PXXX[14:27]", output.dir=getwd(), file.suffix='PSR aggregate')
 
@@ -83,7 +83,7 @@ We generated the evolutionary fertility predictions by setting `evo=TRUE` and st
 ```{r}
 #setwd("../evo")
 simDir <- file.path(getwd(), "bayesTFR.output")
-tfr.predict(evo=TRUE, h2=0.3, end.year=2100, burnin=2000, burnin3=10000, seed=seed, nr.traj=1000, sim.dir=simDir, use.correlation=TRUE, save.as.ascii=0, use.tfr3=TRUE, replace.output=TRUE)
+tfr.predict(evo=TRUE, h2=0.4, end.year=2100, burnin=2000, burnin3=10000, seed=seed, nr.traj=1000, sim.dir=simDir, use.correlation=TRUE, save.as.ascii=0, use.tfr3=TRUE, replace.output=TRUE)
 
 evopredtfr <- get.tfr.prediction(sim.dir=simDir)
 ```
