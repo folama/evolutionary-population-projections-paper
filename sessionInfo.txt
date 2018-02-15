@@ -1,0 +1,28 @@
+R version 3.4.3 (2017-11-30)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.2
+
+Matrix products: default
+BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_AU.UTF-8/en_AU.UTF-8/en_AU.UTF-8/C/en_AU.UTF-8/en_AU.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] wpp2017_1.1-2   bayesPop_6.2-3  bayesLife_3.2-0 bayesTFR_6.1-2  devtools_1.13.4
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.15       compiler_3.4.3     nloptr_1.0.4       git2r_0.21.0       plyr_1.8.4        
+ [6] googleVis_0.6.2    tools_3.4.3        dotCall64_0.9-5.2  digest_0.6.15      lme4_1.1-15       
+[11] jsonlite_1.5       memoise_1.1.0      nlme_3.1-131       lattice_0.20-35    mgcv_1.8-23       
+[16] Matrix_1.2-12      curl_3.1           yaml_2.1.16        parallel_3.4.3     mvtnorm_1.0-7     
+[21] SparseM_1.77       spam_2.1-2         coda_0.19-1        stringr_1.2.0      withr_2.1.1       
+[26] httr_1.3.1         knitr_1.19         maps_3.2.0         MatrixModels_0.4-1 fields_9.6        
+[31] grid_3.4.3         hett_0.3-1         nnet_7.3-12        R6_2.2.2           foreign_0.8-69    
+[36] sp_1.2-7           rworldmap_1.3-6    minqa_1.2.4        magrittr_1.5       reshape2_1.4.3    
+[41] car_2.1-6          wpp2012_2.2-1      maptools_0.9-2     codetools_0.2-15   MASS_7.3-48       
+[46] splines_3.4.3      abind_1.4-5        pbkrtest_0.4-7     quantreg_5.34      stringi_1.1.6     
