@@ -4,11 +4,11 @@
 knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
 ```
 
-This document contains the R code used to generate the simulations and charts in the working paper "Natural selection makes world population stabilisation unlikely in the foreseeable future" (link to be provided when available). The simulations use an amended "evolutionary" version of the R package [bayesTFR](https://cran.r-project.org/web/packages/bayesTFR/index.html). The evolutionary version can be found at [github](https://github.com/jasonacollins/bayesTFR).
+This document contains the R code used to generate the simulations and charts in the working paper "Natural selection makes world population stabilisation unlikely in the foreseeable future" (link to be provided when available). The simulations use an amended "evolutionary" version of the R package [bayesTFR](https://cran.r-project.org/web/packages/bayesTFR/index.html). The evolutionary version can be found at [github](https://github.com/jasonacollins/bayesTFR), with this code and simulations results also in a [github repository](https://github.com/jasonacollins/bayesTFR-evo-code).
 
 ##Initiation
 
-These simulations require the packages bayesTFR, bayesLife and bayesPop. The evolutionary branch of bayesTFR should be installed from github, which requires installation of the package 'devtools'
+These simulations require the packages bayesTFR, bayesLife and bayesPop. The evolutionary branch of bayesTFR should be installed from github, which requires installation of the package 'devtools'. Details of the versions used for this simulation can be seen in the sessionInfo.txt file in the github repository.
 
 ```{r}
 install.packages("devtools")
@@ -138,3 +138,9 @@ for (i in c(900, 903, 904, 905, 908, 935)) {
   dev.copy2pdf(out.type = "pdf", width = 8, height = 8, file=paste0(i, "pop.pdf"))
 }
 ```
+
+Session info for the above simulations was captured as follows:
+```{r}
+ writeLines(capture.output(sessionInfo()), "sessionInfo.txt")
+```
+
