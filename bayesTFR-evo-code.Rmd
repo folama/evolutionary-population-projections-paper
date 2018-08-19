@@ -29,12 +29,12 @@ library("bayesLife")
 library("bayesPop")
 ```
 
-##Base model
+##MCMC
 
 To generate the base model forecasts, we ran a converged simulation with 3x62,000 long MCMCs of Phase II and 3x70,000 long MCMCs of Phase III.
 
 ```{r}
-#setwd("fertility/base")
+#set working directory
 seed <- 20180205
 
 m <- run.tfr.mcmc(iter='auto', thin=30, nr.chains=3, start.year=1950, present.year=2015, wpp.year=2017, seed=seed, verbose=TRUE, replace=TRUE)
@@ -43,6 +43,8 @@ simDir <- file.path(getwd(), "bayesTFR.output")
 
 m3 <- run.tfr3.mcmc(iter='auto', thin=30, nr.chains=3, seed=seed, sim.dir=simDir, verbose=TRUE, replace=TRUE)
 ```
+
+##Base simulation
 
 We generated fertility preditions and stored them in the element `predtfr`.
 
@@ -76,13 +78,11 @@ write.pop.projection.summary(aggr, expression="PXXX[5:13]/(PXXX[1:4] + PXXX[14:2
 
 ##Evolutionary model
 
-Before generating the evolutionary model predictions, we copied the MCMC data generated for the base predictions into a new directory for the evolutonary simulations. We did this by creating a replica of the base simulation.
+Before generating the evolutionary model predictions, we copied the MCMC data generated for the base predictions into a new directory for the evolutonary simulations.
 
 We generated the evolutionary fertility predictions by setting `evo=TRUE` and stored them in the element `evopredtfr`.
 
 ```{r}
-#setwd("../evo")
-simDir <- file.path(getwd(), "bayesTFR.output")
 tfr.predict(evo=TRUE, h2=0.4, end.year=2100, burnin=2000, burnin3=10000, seed=seed, nr.traj=1000, sim.dir=simDir, use.correlation=TRUE, save.as.ascii=0, use.tfr3=TRUE, replace.output=TRUE)
 
 evopredtfr <- get.tfr.prediction(sim.dir=simDir)
@@ -137,6 +137,54 @@ for (i in c(900, 903, 904, 905, 908, 935)) {
   pop.trajectories.plot (aggr, country=i, pi=c(90), nr.traj=0, col=c('black', 'blue', 'blue', 'blue', 'blue', '#00000020'), sum.over.ages=TRUE, show.legend=FALSE, add=TRUE)
   dev.copy2pdf(out.type = "pdf", width = 8, height = 8, file=paste0(i, "pop.pdf"))
 }
+```
+
+
+##Electronic appendix
+
+Code for generating additional data files for electronic appendix. These reflect the data used in the figures in the paper.
+
+###Total fertility rate
+```{r}
+tfrtablecolumns <- c("country_name", "country_code", "variant", "1950-55", "1955-60","1960-65","1965-1970","1970-75","1975-80", "1980-85","1985-90", "1990-95","1995-2000","2000-05", "2005-10", "2010-15", "2015-20", "2020-25", "2025-30", "2030-35", "2035-40", "2040-45", "2045-50", "2050-55", "2055-60", "2060-65", "2065-70", "2070-75", "2075-80", "2080-85", "2085-90", "2090-95", "2095-2100")
+
+#change 'predtfr' to 'evpredtfr' for evolutionary simulations
+tfrtable <- cbind(data.frame(matrix(country.names(predtfr, 900), 3)), matrix(900, 3), t(tfr.trajectories.table(predtfr, country=c(900), pi=c(90), half.child.variant=FALSE)))
+tfrtable <- cbind(tfrtable[,1:2], rownames(tfrtable), tfrtable[,3:32])
+colnames(tfrtable) <- tfrtablecolumns
+rownames(tfrtable) <- NULL
+
+#change 'predtfr' to 'evpredtfr' for evolutionary simulations
+for (i in c(903, 904, 905, 908, 935)) {
+tfrcountry <- cbind(data.frame(matrix(country.names(predtfr, i), 3)), matrix(i, 3), t(tfr.trajectories.table(predtfr, country=c(i), pi=c(90), half.child.variant=FALSE)))
+tfrcountry <- cbind(tfrcountry[,1:2], rownames(tfrcountry), tfrcountry[,3:32])
+colnames(tfrcountry) <- tfrtablecolumns
+rownames(tfrcountry) <- NULL
+tfrtable <- rbind(tfrtable, tfrcountry)
+}
+
+write.csv(tfrtable, file="tfrtable.csv", row.names=FALSE)
+```
+
+
+###Population
+```{r}
+tablecolumns <- c("country_name", "country_code", "variant", "1950", "1955","1960","1965","1970","1975", "1980","1985", "1990","1995","2000", "2005", "2010", "2015", "2020", "2025", "2030", "2035", "2040", "2045", "2050", "2055", "2060", "2065", "2070", "2075", "2080", "2085", "2090", "2095", "2100")
+
+poptable <- cbind(data.frame(matrix(country.names(predtfr, 900), 3)), matrix(900, 3), t(pop.trajectories.table(aggr, country=c(900), pi=c(90))))
+poptable <- cbind(poptable[,1:2], rownames(poptable), poptable[,3:33])
+colnames(poptable) <- tablecolumns
+rownames(poptable) <- NULL
+
+for (i in c(903, 904, 905, 908, 935)) {
+popcountry <- cbind(data.frame(matrix(country.names(predtfr, i), 3)), matrix(i, 3), t(pop.trajectories.table(aggr, country=c(i), pi=c(90), half.child.variant=FALSE)))
+popcountry <- cbind(popcountry[,1:2], rownames(popcountry), popcountry[,3:33])
+colnames(popcountry) <- tablecolumns
+rownames(popcountry) <- NULL
+poptable <- rbind(poptable, popcountry)
+}
+
+write.csv(poptable, file="poptable.csv", row.names=FALSE)
 ```
 
 Session info for the above simulations was captured as follows:
