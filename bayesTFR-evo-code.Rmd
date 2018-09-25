@@ -83,7 +83,7 @@ Before generating the evolutionary model predictions, we copied the MCMC data ge
 We generated the evolutionary fertility predictions by setting `evo=TRUE` and stored them in the element `evopredtfr`.
 
 ```{r}
-tfr.predict(evo=TRUE, h2=0.4, end.year=2100, burnin=2000, burnin3=10000, seed=seed, nr.traj=1000, sim.dir=simDir, use.correlation=TRUE, save.as.ascii=0, use.tfr3=TRUE, replace.output=TRUE)
+tfr.predict(evo=TRUE, h2=0.3, end.year=2100, burnin=2000, burnin3=10000, seed=seed, nr.traj=1000, sim.dir=simDir, use.correlation=TRUE, save.as.ascii=0, use.tfr3=TRUE, replace.output=TRUE)
 
 evopredtfr <- get.tfr.prediction(sim.dir=simDir)
 ```
@@ -124,19 +124,43 @@ We generated charts of the total fertility rate, with the base and evolutionary 
 
 ```{r}
 for (i in c(900, 903, 904, 905, 908, 935)) {
-  tfr.trajectories.plot(evopredtfr, country=i, pi=c(90), nr.traj=0, half.child.variant=FALSE, typical.trajectory=FALSE, show.legend = FALSE, ylim=NULL)
-  tfr.trajectories.plot(predtfr, country=i, pi=c(90), nr.traj=0, col=c('black', 'green', 'blue', 'blue', 'blue', '#00000020'), half.child.variant=FALSE, typical.trajectory=FALSE, show.legend = FALSE, add=TRUE)
+  tfr.trajectories.plot(predtfr, country=i, pi=c(90), nr.traj=0, col=c('black', 'green', 'gray60', 'gray60', 'blue', '#00000020'), half.child.variant=FALSE, typical.trajectory=FALSE, show.legend = FALSE, ylim=NULL)
+  tfr.trajectories.plot(evopredtfr, country=i, pi=c(90), nr.traj=0, col=c('black', 'green', 'black', 'black', 'blue', '#00000020'), half.child.variant=FALSE, typical.trajectory=FALSE, show.legend = FALSE, add=TRUE)
   dev.copy2pdf(out.type = "pdf", width = 8, height = 8, file=paste0(i, "TFR.pdf"))
 }
 ```
 
-We then generated charts of the population size, with the base and evolutionary model plotted on the same figure.
+We then generated charts of the population size, with the base and evolutionary model plotted on the same figure. These are broken into separate processes (rather than dealt with through a loop) due to a need to adjust the axis for publication.
 ```{r}
-for (i in c(900, 903, 904, 905, 908, 935)) {
-  pop.trajectories.plot (evoaggr, country=i, pi=c(90), nr.traj=0, sum.over.ages=TRUE, show.legend=FALSE)
-  pop.trajectories.plot (aggr, country=i, pi=c(90), nr.traj=0, col=c('black', 'blue', 'blue', 'blue', 'blue', '#00000020'), sum.over.ages=TRUE, show.legend=FALSE, add=TRUE)
-  dev.copy2pdf(out.type = "pdf", width = 8, height = 8, file=paste0(i, "pop.pdf"))
-}
+pop.trajectories.plot(aggr, country=900, pi=c(90), nr.traj=0, col=c('black', 'gray60', 'gray60', 'gray60', 'gray60', '#00000020'), sum.over.ages=TRUE, yaxt="n", ylim=c(0,14e6), show.legend=FALSE)
+axis(2, at=c(0, 2e6, 4e6, 6e6, 8e6, 10e6, 12e6, 14e6), labels=c(0, 2e9, 4e9, 6e9, 8e9, 10e9, 12e9, 14e9))
+pop.trajectories.plot(evoaggr, country=900, pi=c(90), nr.traj=0, col=c('black', 'black', 'black', 'black', 'black', '#00000020'), sum.over.ages=TRUE, show.legend=FALSE, yaxt="n", add=TRUE)
+dev.copy2pdf(out.type = "pdf", width = 8, height = 8, file="900pop.pdf")
+  
+pop.trajectories.plot(aggr, country=903, pi=c(90), nr.traj=0, col=c('black', 'gray60', 'gray60', 'gray60', 'gray60', '#00000020'), sum.over.ages=TRUE, yaxt="n", ylim=c(0,6e6), show.legend=FALSE)
+axis(2, at=c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6), labels=c(0, 1e9, 2e9, 3e9, 4e9, 5e9, 6e9))
+pop.trajectories.plot(evoaggr, country=903, pi=c(90), nr.traj=0, col=c('black', 'black', 'black', 'black', 'black', '#00000020'), sum.over.ages=TRUE, show.legend=FALSE, yaxt="n", add=TRUE)
+dev.copy2pdf(out.type = "pdf", width = 8, height = 8, file="903pop.pdf")
+  
+pop.trajectories.plot(aggr, country=904, pi=c(90), nr.traj=0, col=c('black', 'gray60', 'gray60', 'gray60', 'gray60', '#00000020'), sum.over.ages=TRUE, yaxt="n", ylim=c(0,1.1e6), show.legend=FALSE)
+axis(2, at=c(0, 2e5, 4e5, 6e5, 8e5, 1e6), labels=c(0, 2e8, 4e8, 6e8, 8e8, 1e9))
+pop.trajectories.plot(evoaggr, country=904, pi=c(90), nr.traj=0, col=c('black', 'black', 'black', 'black', 'black', '#00000020'), sum.over.ages=TRUE, show.legend=FALSE, yaxt="n", add=TRUE)
+dev.copy2pdf(out.type = "pdf", width = 8, height = 8, file="904pop.pdf")
+  
+pop.trajectories.plot(aggr, country=905, pi=c(90), nr.traj=0, col=c('black', 'gray60', 'gray60', 'gray60', 'gray60', '#00000020'), sum.over.ages=TRUE, yaxt="n", ylim=c(0,8e5), show.legend=FALSE)
+axis(2, at=c(0, 1e5, 2e5, 3e5, 4e5, 5e5, 6e5, 7e5, 8e5), labels=c(0, 1e8, 2e8, 3e8, 4e8, 5e8, 6e8, 7e8, 8e8))
+pop.trajectories.plot(evoaggr, country=905, pi=c(90), nr.traj=0, col=c('black', 'black', 'black', 'black', 'black', '#00000020'), sum.over.ages=TRUE, show.legend=FALSE, yaxt="n", add=TRUE)
+dev.copy2pdf(out.type = "pdf", width = 8, height = 8, file="905pop.pdf")
+  
+pop.trajectories.plot(aggr, country=908, pi=c(90), nr.traj=0, col=c('black', 'gray60', 'gray60', 'gray60', 'gray60', '#00000020'), sum.over.ages=TRUE, yaxt="n", ylim=c(5e5,9e5), show.legend=FALSE)
+axis(2, at=c(5e5, 6e5, 7e5, 8e5, 9e5), labels=c(5e8, 6e8, 7e8, 8e8, 9e8))
+pop.trajectories.plot(evoaggr, country=908, pi=c(90), nr.traj=0, col=c('black', 'black', 'black', 'black', 'black', '#00000020'), sum.over.ages=TRUE, show.legend=FALSE, yaxt="n", add=TRUE)
+dev.copy2pdf(out.type = "pdf", width = 8, height = 8, file="908pop.pdf")
+  
+pop.trajectories.plot(aggr, country=935, pi=c(90), nr.traj=0, col=c('black', 'gray60', 'gray60', 'gray60', 'gray60', '#00000020'), sum.over.ages=TRUE, yaxt="n", ylim=c(0,7e6), show.legend=FALSE)
+axis(2, at=c(0, 1e6, 2e6, 3e6, 4e6, 5e6, 6e6, 7e6), labels=c(0, 1e9, 2e9, 3e9, 4e9, 5e9, 6e9, 7e9))
+pop.trajectories.plot(evoaggr, country=935, pi=c(90), nr.traj=0, col=c('black', 'black', 'black', 'black', 'black', '#00000020'), sum.over.ages=TRUE, show.legend=FALSE, yaxt="n", add=TRUE)
+dev.copy2pdf(out.type = "pdf", width = 8, height = 8, file="935pop.pdf")
 ```
 
 
